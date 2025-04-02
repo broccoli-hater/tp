@@ -3,6 +3,7 @@ package seedu.address.logic.commands;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
+import static seedu.address.logic.commands.TagCommand.tagProjectToPerson;
 import static seedu.address.testutil.TypicalPersons.getTypicalAddressBook;
 import static seedu.address.testutil.TypicalPersons.getTypicalPersons;
 
@@ -40,8 +41,8 @@ public class TagCommandTest {
     public void execute_tag_success() {
         Person personToTag = getTypicalPersons().get(1);
         Phone phone = personToTag.getPhone();
-        TagCommand tagComd = new TagCommand(phone, tagsToAdd, new LinkedHashSet<>());
-        Person taggedPerson = personToTag.tagPerson(tagsToAdd, new LinkedHashSet<>());
+        TagCommand tagComd = new TagCommand(phone, tagsToAdd);
+        Person taggedPerson = tagProjectToPerson(personToTag, tagsToAdd);
 
         String expectedMessage = String.format(TagCommand.MESSAGE_SUCCESS, taggedPerson.getName());
         Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
@@ -54,14 +55,14 @@ public class TagCommandTest {
     public void equals() {
         Person p = new PersonBuilder().withTags("T_3st-x").build();
         Phone phone = p.getPhone();
-        TagCommand addTagCommand = new TagCommand(phone, tagsToAdd, new LinkedHashSet<>());
-        TagCommand otherAddTagCommand = new TagCommand(phone, new LinkedHashSet<>(), new LinkedHashSet<>());
+        TagCommand addTagCommand = new TagCommand(phone, tagsToAdd);
+        TagCommand otherAddTagCommand = new TagCommand(phone, new LinkedHashSet<>());
 
         // same object -> returns true
         assertTrue(addTagCommand.equals(addTagCommand));
 
         // same values -> returns true
-        TagCommand tagCommandCopy = new TagCommand(phone, tagsToAdd, new LinkedHashSet<>());
+        TagCommand tagCommandCopy = new TagCommand(phone, tagsToAdd);
         assertTrue(addTagCommand.equals(tagCommandCopy));
 
         // different types -> returns false

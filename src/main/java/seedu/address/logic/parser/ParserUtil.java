@@ -191,9 +191,9 @@ public class ParserUtil {
     /**
      * Parses {@code Collection<String> projects} into a {@code Set<Tag>}.
      */
-    public static Set<Project> parseProjects(Collection<String> projects) throws ParseException {
+    public static Set<Tag> parseProjects(Collection<String> projects) throws ParseException {
         requireNonNull(projects);
-        final Set<Project> tagSet = new LinkedHashSet<>();
+        final Set<Tag> tagSet = new LinkedHashSet<>();
         for (String tagName : projects) {
             tagSet.add(parseProject(tagName.toLowerCase()));
         }

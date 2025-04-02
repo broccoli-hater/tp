@@ -4,7 +4,6 @@ import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
 import java.util.Collections;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -26,21 +25,19 @@ public class Person {
     private final PreferredContactMethod preferredContactMethod;
 
     // Data fields
-    private final Set<Tag> tags;
-    private final Set<Project> projects;
+    private final Set<Tag> tags = new LinkedHashSet<>();
+    private final Set<Project> projects = new LinkedHashSet<>();
 
     /**
-     * Constructs a {@code Person} with a specified preferred contact method.
-     *
-     * @param name The name of the person.
-     * @param phone The phone number of the person.
-     * @param optionalEmail The email address of the person.
-     * @param tags The set of tags associated with the person.
-     * @param projects The set of projects associated with the person
+     * Every field must be present and not null.
      */
-    public Person(Name name, Phone phone, Optional<Email> optionalEmail,
-                  Set<Tag> tags, Set<Project> projects) {
-        this(name, phone, optionalEmail, tags, projects, new PreferredContactMethod("Phone"));
+    public Person(Name name, Phone phone, Optional<Email> optionalEmail, Set<Tag> tags) {
+        requireAllNonNull(name, phone, optionalEmail, tags);
+        this.name = name;
+        this.phone = phone;
+        this.optionalEmail = optionalEmail;
+        tagOrProject(tags);
+        this.preferredContactMethod = new PreferredContactMethod("Phone");
     }
 
     /**
@@ -50,18 +47,17 @@ public class Person {
      * @param phone The phone number of the person.
      * @param optionalEmail The email address of the person.
      * @param tags The set of tags associated with the person.
-     * @param projects The set of projects associated with the person.
      * @param preferredContactMethod The preferred method of contact (Phone or Email).
      */
-    public Person(Name name, Phone phone, Optional<Email> optionalEmail,
-                   Set<Tag> tags, Set<Project> projects, PreferredContactMethod preferredContactMethod) {
-        requireAllNonNull(name, phone, optionalEmail, tags, projects, preferredContactMethod);
+    public Person(Name name, Phone phone, Optional<Email> optionalEmail, Set<Tag> tags, PreferredContactMethod
+            preferredContactMethod) {
+        requireAllNonNull(name, phone, optionalEmail, tags, preferredContactMethod);
         this.name = name;
         this.phone = phone;
         this.optionalEmail = optionalEmail;
-        this.tags = Collections.unmodifiableSet(tags);
-        this.projects = Collections.unmodifiableSet(projects);
+        tagOrProject(tags);
         this.preferredContactMethod = preferredContactMethod;
+
     }
 
     public Name getName() {
@@ -71,25 +67,8 @@ public class Person {
     public Phone getPhone() {
         return phone;
     }
-
     public Optional<Email> getEmail() {
         return optionalEmail;
-    }
-
-    /**
-     * Returns an immutable tag set, which throws {@code UnsupportedOperationException}
-     * if modification is attempted.
-     */
-    public Set<Tag> getTags() {
-        return tags;
-    }
-
-    /**
-     * Returns an immutable project set, which throws {@code UnsupportedOperationException}
-     * if modification is attempted.
-     */
-    public Set<Project> getProjects() {
-        return projects;
     }
 
     public PreferredContactMethod getPreferredContactMethod() {
@@ -97,112 +76,55 @@ public class Person {
     }
 
     /**
-     * Returns a {@code List} of {@code Tag}s from the given {@code tagSet} that are not associated with this person.
-     *
-     * @param tagSet the set of tags to compare against this person's tags; must not be null
-     * @return a list of tags from {@code tagSet} that this person does not have
-     * @throws NullPointerException if {@code tagSet} or any of its elements are null
-     */
-    public List<Tag> tagsNotInTagSet(Set<Tag> tagSet) {
-        requireAllNonNull(tagSet);
-        return tagSet.stream().filter(x -> !this.tags.contains(x)).toList();
-    }
-
-    /**
-     * Returns a {@code List} of {@code Project}s from the given {@code projectSet}
-     * that are not associated with this person.
-     * @param projectSet the set of projects to compare against this person's projects; must not be null
-     * @return a list of projects from {@code projectSet} that this person does not have
-     * @throws NullPointerException if {@code projectSet} or any of its elements are null
-     */
-    public List<Project> projectsNotInProjectSet(Set<Project> projectSet) {
-        requireAllNonNull(projectSet);
-        return projectSet.stream().filter(x -> !this.projects.contains(x)).toList();
-    }
-
-    /**
-     * Checks if this person has the same phone number as the specified {@code Phone} object.
-     *
-     * @param toCompare the phone number to compare with this person's phone; must not be null
-     * @return {@code true} if the phone numbers are equal, {@code false} otherwise
-     * @throws NullPointerException if {@code toCompare} is null
-     */
-    public boolean hasSamePhone(Phone toCompare) {
-        requireAllNonNull(toCompare);
-        return this.phone.equals(toCompare);
-    }
-
-    /**
-     * Creates and returns a new {@code Person} with updated details based on the given {@code EditPersonDescriptor}.
-     * Fields not specified in the descriptor will retain their original values.
-     *
-     * @param epd the descriptor containing the fields to update; must not be null
-     * @return a new {@code Person} instance with the updated details
-     * @throws NullPointerException if {@code epd} is null
+     * Creates and returns a new {@code Person} with updated details.
      */
     public Person createEditedPerson(EditPersonDescriptor epd) {
-        requireAllNonNull(epd);
         Name updatedName = epd.name().orElse(this.name);
         Phone updatedPhone = epd.phone().orElse(this.phone);
         Optional<Email> updatedEmail = epd.email().or(() -> this.optionalEmail);
 
-        return new Person(updatedName, updatedPhone, updatedEmail, tags, projects, preferredContactMethod);
+        Set<Project> currentProjects = this.projects;
+        Set<Tag> updatedTags = new LinkedHashSet<>(this.tags);
+        updatedTags.addAll(currentProjects);
+
+        return new Person(updatedName, updatedPhone, updatedEmail, updatedTags);
     }
 
     /**
-     * Creates and returns a new {@code Person} with the specified tags and projects added to the existing ones.
-     *
-     * @param newlyAddedTags the tags to add; must not be null
-     * @param newlyAddedProjects the projects to add; must not be null
-     * @return a new {@code Person} instance with the additional tags and projects
-     * @throws NullPointerException if {@code newlyAddedTags} or {@code newlyAddedProjects} is null
+     * Separates tags from projects and place them in separate LinkedHashSets
+     * @param tags set of tags
      */
-    public Person tagPerson(Set<Tag> newlyAddedTags, Set<Project> newlyAddedProjects) {
-        requireAllNonNull(newlyAddedTags, newlyAddedProjects);
-        Set<Tag> newTags = new LinkedHashSet<>(this.tags);
-        Set<Project> newProjects = new LinkedHashSet<>(this.projects);
-
-        newTags.addAll(newlyAddedTags);
-        newProjects.addAll(newlyAddedProjects);
-
-        return new Person(name, phone, optionalEmail, newTags, newProjects, preferredContactMethod);
+    public void tagOrProject(Set<Tag> tags) {
+        for (Tag t : tags) {
+            if (t instanceof Project project) {
+                this.projects.add(project);
+            } else {
+                this.tags.add(t);
+            }
+        }
     }
 
     /**
-     * Creates and returns a new {@code Person} with the specified tags and projects removed from the existing ones.
-     *
-     * @param tagsToRemove the tags to remove; must not be null
-     * @param projectsToRemove the projects to remove; must not be null
-     * @return a new {@code Person} instance with the specified tags and projects removed
-     * @throws NullPointerException if {@code tagsToRemove} or {@code projectsToRemove} is null
-     */
-    public Person unTagPerson(Set<Tag> tagsToRemove, Set<Project> projectsToRemove) {
-        requireAllNonNull(tagsToRemove, projectsToRemove);
-        Set<Tag> newTags = new LinkedHashSet<>(this.tags);
-        Set<Project> newProjects = new LinkedHashSet<>(this.projects);
-
-        newTags.removeAll(tagsToRemove);
-        newProjects.removeAll(projectsToRemove);
-
-        return new Person(name, phone, optionalEmail, newTags, newProjects, preferredContactMethod);
-    }
-
-    /**
-     * Creates and returns a new {@code Person} with the specified project replaced.
-     * If the project exists in the current set,
-     * it will be removed and then re-added (e.g., to reflect updated details).
-     * @param project the project to replace; must not be null
-     * @return a new {@code Person} instance with the updated project
-     * @throws NullPointerException if {@code project} is null
+     * Replaces a project in a person.
+     * @param project to replace with.
      */
     public Person replaceProject(Project project) {
-        requireAllNonNull(project);
-        LinkedHashSet<Project> newProjectSet = new LinkedHashSet<>(this.projects);
-
-        if (newProjectSet.remove(project)) {
-            newProjectSet.add(project);
+        if (this.projects.remove(project)) {
+            projects.add(project);
         }
-        return new Person(name, phone, optionalEmail, tags, newProjectSet, preferredContactMethod);
+        return this;
+    }
+
+    /**
+     * Returns an immutable tag set, which throws {@code UnsupportedOperationException}
+     * if modification is attempted.
+     */
+    public Set<Tag> getTags() {
+        return Collections.unmodifiableSet(tags);
+    }
+
+    public Set<Project> getProjects() {
+        return Collections.unmodifiableSet(projects);
     }
 
     /**
@@ -213,7 +135,47 @@ public class Person {
         if (otherPerson == this) {
             return true;
         }
-        return otherPerson != null && otherPerson.hasSamePhone(this.phone);
+
+        return otherPerson != null
+                && otherPerson.getPhone().equals(getPhone());
+    }
+
+    /**
+     * Stores the details to edit the person with. Each non-empty field value will replace the
+     * corresponding field value of the person.
+     */
+    public record EditPersonDescriptor(Optional<Name> name, Optional<Phone> phone, Optional<Email> email) {
+
+        // No-arg constructor, defaults all fields to Optional.empty.
+        public EditPersonDescriptor() {
+            this(Optional.empty(), Optional.empty(), Optional.empty());
+        }
+
+        // Copy constructor.
+        public EditPersonDescriptor(EditPersonDescriptor toCopy) {
+            this(toCopy.name, toCopy.phone, toCopy.email);
+        }
+
+        public EditPersonDescriptor setName(Name newName) {
+            return new EditPersonDescriptor(Optional.ofNullable(newName), this.phone, this.email);
+        }
+
+        public EditPersonDescriptor setPhone(Phone newPhone) {
+            return new EditPersonDescriptor(this.name, Optional.ofNullable(newPhone), this.email);
+        }
+
+        public EditPersonDescriptor setEmail(Email newEmail) {
+            return new EditPersonDescriptor(this.name, this.phone, Optional.ofNullable(newEmail));
+        }
+
+        @Override
+        public String toString() {
+            return new ToStringBuilder(this)
+                    .add("name", name)
+                    .add("phone", phone)
+                    .add("email", email)
+                    .toString();
+        }
     }
 
     /**
@@ -228,8 +190,7 @@ public class Person {
             return name.equals(otherPerson.name)
                     && phone.equals(otherPerson.phone)
                     && optionalEmail.equals(otherPerson.optionalEmail)
-                    && tags.equals(otherPerson.tags)
-                    && projects.equals(otherPerson.projects);
+                    && tags.equals(otherPerson.tags);
         }
         return false;
     }
@@ -237,7 +198,7 @@ public class Person {
     @Override
     public int hashCode() {
         // use this method for custom fields hashing instead of implementing your own
-        return Objects.hash(name, phone, optionalEmail, tags, projects);
+        return Objects.hash(name, phone, optionalEmail, tags);
     }
 
     @Override
@@ -247,7 +208,6 @@ public class Person {
                 .add("phone", phone)
                 .add("email", optionalEmail)
                 .add("tags", tags)
-                .add("projects", projects)
                 .toString();
     }
 }

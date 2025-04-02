@@ -36,7 +36,7 @@ public class TagCommandParserTest {
     private TagCommandParser parser = new TagCommandParser();
     private Project sampleProject;
     private Tag sampleTag;
-    private Set<Project> projectsToRemove;
+    private Set<Tag> projectsToRemove;
     private Set<Tag> tagsToRemove;
     @BeforeEach
     public void setUp() {
@@ -54,7 +54,7 @@ public class TagCommandParserTest {
         Person person = new PersonBuilder(ALICE).build();
         Phone personPhone = person.getPhone();
         assertParseSuccess(parser, PHONE_DESC_ALICE
-                + TAG_DESC_FRIENDS, new TagCommand(personPhone, tagsToRemove, new LinkedHashSet<>()));
+                + TAG_DESC_FRIENDS, new TagCommand(personPhone, tagsToRemove));
     }
 
     @Test
@@ -62,7 +62,7 @@ public class TagCommandParserTest {
         Person person = new PersonBuilder(BENSON).build();
         Phone personPhone = person.getPhone();
         assertParseSuccess(parser, PHONE_DESC_BENSON
-                + PROJECT_DESC_X, new TagCommand(personPhone, new LinkedHashSet<>(), projectsToRemove));
+                + PROJECT_DESC_X, new TagCommand(personPhone, projectsToRemove));
     }
 
     @Test

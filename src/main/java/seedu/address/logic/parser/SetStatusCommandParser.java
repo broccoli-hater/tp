@@ -14,7 +14,7 @@ import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.EditCommand;
 import seedu.address.logic.commands.SetStatusCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
-import seedu.address.model.tag.SetStatusDescriptor;
+import seedu.address.model.tag.Project.SetStatusDescriptor;
 
 /**
  * Parses input arguments and creates a new EditCommand object

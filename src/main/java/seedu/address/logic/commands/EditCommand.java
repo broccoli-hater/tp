@@ -13,8 +13,8 @@ import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
-import seedu.address.model.person.EditPersonDescriptor;
 import seedu.address.model.person.Person;
+import seedu.address.model.person.Person.EditPersonDescriptor;
 
 /**
  * Edits the details of an existing person in the address book.

@@ -15,7 +15,7 @@ import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.person.Person;
 import seedu.address.model.tag.Project;
-import seedu.address.model.tag.SetStatusDescriptor;
+import seedu.address.model.tag.Project.SetStatusDescriptor;
 
 /**
  * Adds a person to the address book.
@@ -69,7 +69,7 @@ public class SetStatusCommand extends Command {
         Person personToEdit = lastShownList.get(index.getZeroBased());
         Project projectToEdit = personToEdit.getProjects()
                 .stream()
-                .filter(x -> x.hasSameName(projectName))
+                .filter(x -> x.getTagName().equals(projectName))
                 .findFirst()
                 .orElseThrow(() -> new CommandException(Messages.MESSAGE_ABSENT_PROJECT));
 

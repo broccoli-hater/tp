@@ -11,7 +11,6 @@ import java.util.stream.Stream;
 import seedu.address.logic.commands.TagCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.person.Phone;
-import seedu.address.model.tag.Project;
 import seedu.address.model.tag.Tag;
 
 /**
@@ -35,10 +34,10 @@ public class TagCommandParser implements Parser<TagCommand> {
 
         argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_PHONE);
         Phone phone = ParserUtil.parsePhone(argMultimap.getValue(PREFIX_PHONE).get());
-        Set<Tag> tagSet = ParserUtil.parseTags(argMultimap.getAllValues(PREFIX_TAG));
-        Set<Project> projectSet = ParserUtil.parseProjects(argMultimap.getAllValues(PREFIX_PROJECT));
+        Set<Tag> tagList = ParserUtil.parseTags(argMultimap.getAllValues(PREFIX_TAG));
+        tagList.addAll(ParserUtil.parseProjects(argMultimap.getAllValues(PREFIX_PROJECT)));
 
-        return new TagCommand(phone, tagSet, projectSet);
+        return new TagCommand(phone, tagList);
     }
 
     /**

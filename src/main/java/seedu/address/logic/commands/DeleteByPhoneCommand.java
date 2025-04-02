@@ -25,7 +25,7 @@ public class DeleteByPhoneCommand extends DeleteCommand {
 
         Person personToDelete = model.getFilteredPersonList()
             .stream()
-            .filter(x -> x.hasSamePhone(phone))
+            .filter(x -> x.getPhone().equals(phone))
             .findFirst()
             .orElseThrow(() -> new CommandException(Messages.MESSAGE_ABSENT_PHONE_NUMBER));
 
