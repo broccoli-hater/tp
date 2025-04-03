@@ -25,7 +25,7 @@ public class SetStatusCommand extends Command {
     public static final String COMMAND_WORD = "setstatus";
 
     public static final String MESSAGE_USAGE = COMMAND_WORD + ": Sets the status of specified project of the "
-            + "person identified by the index number used in the displayed person list. "
+            + "person identified by the index number used in the displayed person list. \n"
             + "Existing values will be overwritten by the input values.\n"
             + "Parameters: INDEX (must be a positive integer) "
             + PREFIX_PROJECT + "PROJECT "

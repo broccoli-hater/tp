@@ -1,9 +1,19 @@
-#copyButton, #helpMessage {
-    -fx-text-fill: white;
+.help-container {
+    -fx-background-color: derive(#1d1d1d, 20%);
+}
+
+.help-content {
+    -fx-padding: 10;
+}
+
+.help-footer {
+    -fx-background-color: derive(#1d1d1d, 10%);
+    -fx-padding: 5;
 }
 
 #copyButton {
     -fx-background-color: dimgray;
+    -fx-text-fill: white;
 }
 
 #copyButton:hover {
@@ -14,6 +24,80 @@
     -fx-background-color: darkgray;
 }
 
-#helpMessageContainer {
-    -fx-background-color: derive(#1d1d1d, 20%);
+/* Markdown specific styling */
+.markdown-text {
+    -fx-fill: white;
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 11px;
+}
+
+.markdown-code {
+    -fx-text-fill: white;
+    -fx-wrap-text: true;
+    -fx-font-size: 11px;
+    -fx-max-width: 30em;
+}
+
+.markdown-link {
+    -fx-fill: #4488cc;
+}
+
+.markdown-link-hover {
+    -fx-underline: true;
+}
+
+.markdown-code-background {
+    -fx-background-color: derive(#1d1d1d, 10%);
+    -fx-border-color: derive(#1d1d1d, 30%);
+    -fx-wrap-text: true;
+}
+
+/* Table styling */
+.markdown-table-table {
+    -fx-min-width: 90em;
+    -fx-max-width: 90em;
+    -fx-wrap-text: true;
+}
+
+.markdown-table-even, .markdown-table-odd {
+    -fx-background-color: #383838;
+}
+
+.markdown-table-cell {
+    -fx-min-width: 30em;
+    -fx-max-width: 30em;
+    -fx-border-color: #555555;
+    -fx-border-width: 1;
+}
+
+.markdown-table-cell-top {
+    -fx-background-color: #2a2a2a;
+    -fx-font-weight: bold;
+}
+
+.help-scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-border-color: transparent;
+    -fx-pannable: true;
+    -fx-hbar-policy: as-needed;
+    -fx-vbar-policy: as-needed;
+}
+
+.help-scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.help-scroll-pane .scroll-bar:vertical .scroll-bar:horizontal {
+    -fx-opacity: 1;
+    -fx-padding: 0;
+}
+
+.help-scroll-pane .scroll-bar .thumb {
+    -fx-background-color: derive(#1d1d1d, 50%);
+    -fx-background-radius: 0;
+}
+
+.help-scroll-pane .scroll-bar .thumb:hover {
+    -fx-background-color: derive(#1d1d1d, 70%);
 }

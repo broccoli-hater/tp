@@ -3,22 +3,26 @@ package seedu.address.model.person;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.AppUtil.checkArgument;
 
+import java.util.Optional;
+import java.util.logging.Logger;
+
+import seedu.address.commons.core.LogsCenter;
+import seedu.address.logic.Messages;
+import seedu.address.logic.commands.enumeration.PrefixEnum;
+import seedu.address.storage.JsonSnapshotStorage;
+
 /**
  * Represents a Person's name in the address book.
  * Guarantees: immutable; is valid as declared in {@link #isValidName(String)}
  */
 public class Name {
 
-    public static final String MESSAGE_CONSTRAINTS =
-            "Names should only contain alphanumeric characters, spaces, a max of 40 characters, and it should not be"
-                    + " blank";
-
     /*
      * The first character of the address must not be a whitespace,
      * otherwise " " (a blank string) becomes a valid input.
      */
-    public static final String VALIDATION_REGEX = "^[\\p{Alnum}][\\p{Alnum} ]{0,39}$";
-
+    public static final String VALIDATION_REGEX = "^[-a-zA-Z0-9_'.,\\/ ]*";
+    private static final Logger logger = LogsCenter.getLogger(JsonSnapshotStorage.class);
     public final String fullName;
 
     /**
@@ -28,15 +32,52 @@ public class Name {
      */
     public Name(String name) {
         requireNonNull(name);
-        checkArgument(isValidName(name), MESSAGE_CONSTRAINTS);
+        checkArgument(isValidName(name));
         fullName = name;
     }
 
     /**
      * Returns true if a given string is a valid name.
      */
+    public static Optional<String> invaildNameCheck(String test) {
+
+        logger.fine("Name input: " + test);
+        logger.fine("Length of Name: " + test.length() );
+
+        //Check if there is blank
+        if (test.isBlank()) {
+            logger.fine("Length of name: " + test.length() );
+            return Optional.of(Messages.MESSAGE_EMPTY_NAME_MSG);
+        }
+
+        if (PrefixEnum.containsPrefix(test)) {
+            logger.fine("Name contains prefix: " + test);
+            return Optional.of(Messages.MESSAGE_NAME_CONTAINS_PREFIX);
+        }
+
+        if (!test.matches(VALIDATION_REGEX)) {
+            logger.fine("Contains invalid characters name: " + test);
+            return Optional.of(Messages.INVALID_NAME_CHARACTERS_MESSAGE);
+        } else if (test.length() > 40) {
+            logger.fine("More than 40 characters: " + test);
+            return Optional.of(Messages.MESSAGE_NAME_LENGTH_ERROR );
+        }
+
+        logger.fine("Name is valid!: " + test );
+        return Optional.empty();
+    }
+
+    /**
+     * Checks whether a given name string is valid
+     *
+     * @param test The name string to validate
+     * @return {@code true} if the name is valid, {@code false} otherwise.
+     */
     public static boolean isValidName(String test) {
-        return test.matches(VALIDATION_REGEX);
+        Optional<String> errorMessage = invaildNameCheck(test);
+
+        //Checks if name contains invalid characters
+        return errorMessage.isEmpty();
     }
 
 

@@ -23,6 +23,12 @@ public class Messages {
     public static final String MESSAGE_DUPLICATE_FIELDS =
                 "Multiple values specified for the following single-valued field(s): ";
 
+    public static final String INVALID_NAME_CHARACTERS_MESSAGE = "Name contains invalid characters. Only letters,"
+            + " numbers, spaces, '-', '_', '.', ',', apostrophe (') and '/' are allowed.";
+    public static final String MESSAGE_NAME_LENGTH_ERROR = "Name must not exceed 40 characters.";
+    public static final String MESSAGE_EMPTY_NAME_MSG = "Name field cannot be empty.";
+    public static final String MESSAGE_NAME_CONTAINS_PREFIX = "Name contains command prefix.";
+
     /**
      * Returns an error message indicating the duplicate prefixes.
      */
